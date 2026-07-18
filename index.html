@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="우리 아기 오뚝이의 성별을 맞춰보세요! 젠더리빌 이벤트" />
+  <title>👶 오뚝이 성별 맞추기 · 젠더리빌</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Jua&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- ========== 화면 1: 인트로 / 성별 선택 ========== -->
+    <section id="screen-intro" class="screen is-active">
+      <div class="intro-card">
+        <div class="doll doll--mystery" aria-hidden="true">
+          <div class="doll__body">
+            <div class="doll__face">
+              <span class="doll__eye"></span>
+              <span class="doll__eye"></span>
+              <span class="doll__mouth"></span>
+            </div>
+            <span class="doll__question">?</span>
+          </div>
+        </div>
+
+        <h1 class="intro-title">오뚝이의 성별을<br />맞춰주세요!</h1>
+        <p class="intro-sub">여러분의 예상은 무엇인가요? 🎉</p>
+
+        <div class="choice-row">
+          <button class="choice choice--boy" data-guess="boy">
+            <span class="choice__emoji">👦</span>
+            <span class="choice__label">남자아이</span>
+          </button>
+          <button class="choice choice--girl" data-guess="girl">
+            <span class="choice__emoji">👧</span>
+            <span class="choice__label">여자아이</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 화면 2: 박 터뜨리기 ========== -->
+    <section id="screen-game" class="screen">
+      <div class="game-top">
+        <p class="game-guess" id="game-guess"></p>
+        <h2 class="game-title">박을 터뜨려 주세요!</h2>
+        <p class="game-desc">박을 눌러 오자미를 던지세요.<br />여러 번 맞히면 박이 터져요!</p>
+      </div>
+
+      <div class="game-stage">
+        <!-- 박 -->
+        <button class="pot" id="pot" aria-label="박 터뜨리기">
+          <span class="pot__string"></span>
+          <span class="pot__body">
+            <span class="pot__deco"></span>
+            <span class="pot__tassel pot__tassel--left"></span>
+            <span class="pot__tassel pot__tassel--right"></span>
+          </span>
+        </button>
+      </div>
+
+      <p class="game-hint" id="game-hint">👆 박을 클릭하세요!</p>
+    </section>
+
+    <!-- ========== 화면 3: 결과 공개 ========== -->
+    <section id="screen-reveal" class="screen">
+      <div class="reveal-card" id="reveal-card">
+        <p class="reveal-eyebrow">두구두구두구… 🥁</p>
+        <div class="doll" id="reveal-doll">
+          <div class="doll__body">
+            <div class="doll__face">
+              <span class="doll__eye"></span>
+              <span class="doll__eye"></span>
+              <span class="doll__mouth doll__mouth--smile"></span>
+            </div>
+          </div>
+        </div>
+        <h2 class="reveal-title" id="reveal-title"></h2>
+        <p class="reveal-message" id="reveal-message"></p>
+        <button class="reveal-again" id="reveal-again">🔄 다시 하기</button>
+      </div>
+    </section>
+
+    <div class="confetti-layer" id="confetti-layer" aria-hidden="true"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
