@@ -3,3 +3,6 @@
 
 
 *.code-workspace
+
+# 블로그 초안 (개인용)
+docs/blog-post.md
