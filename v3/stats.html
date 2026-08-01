@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>📊 젠더리빌 투표 통계</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #f6f3ee;
+    color: #33302a;
+    padding: 24px 16px 60px;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  .sub { color: #85806f; font-size: 0.85rem; margin-bottom: 20px; }
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .totals { display: flex; gap: 16px; text-align: center; margin-bottom: 16px; }
+  .totals div { flex: 1; }
+  .totals .num { font-size: 1.8rem; font-weight: 700; }
+  .totals .label { font-size: 0.8rem; color: #85806f; }
+  .bar {
+    display: flex;
+    height: 36px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #eee;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+  .bar .boy { background: #2b7fd6; color: #fff; display:flex; align-items:center; justify-content:center; }
+  .bar .girl { background: #e85a97; color: #fff; display:flex; align-items:center; justify-content:center; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th, td { text-align: left; padding: 6px 4px; border-bottom: 1px solid #eee; }
+  th { color: #85806f; font-weight: 600; }
+  .choice-boy { color: #2b7fd6; font-weight: 700; }
+  .choice-girl { color: #e85a97; font-weight: 700; }
+  button {
+    border: none;
+    background: #33302a;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+  .toprow { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .err { color: #c0392b; }
+  .scroll { max-height: 320px; overflow-y: auto; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #1c1a17; color: #ece7dd; }
+    .card { background: #26231f; box-shadow: none; }
+    .sub, .totals .label, th { color: #9a9484; }
+    th, td { border-bottom-color: #38342d; }
+    .bar { background: #38342d; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>📊 젠더리빌 투표 통계</h1>
+    <p class="sub" id="updated">불러오는 중...</p>
+
+    <div class="card">
+      <div class="totals">
+        <div><div class="num" id="num-total">-</div><div class="label">참여 인원 (IP 기준)</div></div>
+        <div><div class="num" id="num-boy">-</div><div class="label">👦 아들 예측</div></div>
+        <div><div class="num" id="num-girl">-</div><div class="label">👧 딸 예측</div></div>
+      </div>
+      <div class="bar" id="bar">
+        <div class="boy" id="bar-boy"></div>
+        <div class="girl" id="bar-girl"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="toprow">
+        <strong>최근 투표 (IP당 마지막 표만)</strong>
+        <button onclick="load()">새로고침</button>
+      </div>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>시간</th><th>선택</th><th>IP</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <p class="sub" id="rawinfo"></p>
+  </div>
+
+<script>
+function fmtTime(t) {
+  // "20/Jul/2026:18:22:29 +0900" -> "20/Jul/2026 18:22:29 +0900"
+  return t.replace(':', ' ');
+}
+
+async function load() {
+  const updatedEl = document.getElementById('updated');
+  updatedEl.textContent = '불러오는 중...';
+  try {
+    const res = await fetch('/guess-log.tsv', { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
+
+    const lastByIp = new Map(); // ip -> {time, choice}
+    let totalClicks = 0;
+
+    for (const line of lines) {
+      const parts = line.split('\t');
+      if (parts.length < 3) continue;
+      const [time, argsStr, ip] = parts;
+      const m = /choice=(boy|girl)/.exec(argsStr || '');
+      if (!m) continue;
+      totalClicks++;
+      lastByIp.set(ip, { time, choice: m[1] });
+    }
+
+    let boyVotes = 0, girlVotes = 0;
+    const rows = [];
+    for (const [ip, v] of lastByIp.entries()) {
+      if (v.choice === 'boy') boyVotes++; else girlVotes++;
+      rows.push({ ip, ...v });
+    }
+    rows.sort((a, b) => (a.time < b.time ? 1 : -1));
+
+    const uniqueVoters = lastByIp.size;
+    document.getElementById('num-total').textContent = uniqueVoters;
+    document.getElementById('num-boy').textContent = boyVotes;
+    document.getElementById('num-girl').textContent = girlVotes;
+
+    const boyPct = uniqueVoters ? Math.round((boyVotes / uniqueVoters) * 100) : 0;
+    const girlPct = uniqueVoters ? 100 - boyPct : 0;
+    const barBoy = document.getElementById('bar-boy');
+    const barGirl = document.getElementById('bar-girl');
+    barBoy.style.width = boyPct + '%';
+    barGirl.style.width = girlPct + '%';
+    barBoy.textContent = uniqueVoters ? `👦 ${boyPct}%` : '';
+    barGirl.textContent = uniqueVoters ? `👧 ${girlPct}%` : '';
+
+    const tbody = document.getElementById('rows');
+    tbody.innerHTML = rows.map((r) => `
+      <tr>
+        <td>${fmtTime(r.time)}</td>
+        <td class="choice-${r.choice}">${r.choice === 'boy' ? '👦 아들' : '👧 딸'}</td>
+        <td>${r.ip}</td>
+      </tr>
+    `).join('');
+
+    document.getElementById('rawinfo').textContent =
+      `총 클릭 수: ${totalClicks}회 (재투표 포함) · 고유 IP: ${uniqueVoters}명`;
+    updatedEl.textContent = '마지막 갱신: ' + new Date().toLocaleString('ko-KR');
+  } catch (e) {
+    updatedEl.innerHTML = '<span class="err">불러오기 실패: ' + e.message + '</span>';
+  }
+}
+
+load();
+setInterval(load, 20000);
+</script>
+</body>
+</html>

@@ -2,7 +2,7 @@
  *  카드 빙고 젠더리빌 · 초음파 성별 맞추기 (v3)
  *  ---------------------------------------------------------------------
  *  ⭐️ 여기만 바꾸면 됩니다! ⭐️
- *  아기의 실제 성별을 'boy'(남자아이) 또는 'girl'(여자아이) 로 설정하세요.
+ *  아기의 실제 성별을 'boy'(아들) 또는 'girl'(딸) 로 설정하세요.
  * ===================================================================== */
 const ACTUAL_GENDER = 'girl'; // 'boy' 또는 'girl'
 /* ===================================================================== */
@@ -33,8 +33,8 @@ const gameHintEl = document.getElementById('game-hint');
 const confettiLayer = document.getElementById('confetti-layer');
 
 const GENDER_TEXT = {
-  boy:  { label: '남자아이', emoji: '👦', color: '#2b7fd6', burst: '#2f8bff' },
-  girl: { label: '여자아이', emoji: '👧', color: '#e85a97', burst: '#ff3b57' },
+  boy:  { label: '아들', emoji: '👦', color: '#2b7fd6', burst: '#2f8bff' },
+  girl: { label: '딸', emoji: '👧', color: '#e85a97', burst: '#ff3b57' },
 };
 
 /* -------------------- 화면 전환 -------------------- */
@@ -54,10 +54,21 @@ document.querySelectorAll('.choice').forEach((btn) => {
     userGuess = btn.dataset.guess;
     const g = GENDER_TEXT[userGuess];
     gameGuessEl.textContent = `나의 예상: ${g.emoji} ${g.label}`;
+    logGuess(userGuess);
     showScreen('game');
     setupBoard();
   });
 });
+
+// 예측 버튼 클릭을 서버 로그에만 남긴다 (화면에는 노출되지 않음)
+function logGuess(choice) {
+  const url = `/log.gif?choice=${choice}`;
+  if (navigator.sendBeacon) {
+    navigator.sendBeacon(url);
+  } else {
+    new Image().src = url;
+  }
+}
 
 /* -------------------- 화면 2: 카드 빙고 세팅 -------------------- */
 // 보드 전체에서 단색으로 완성된 빙고 라인의 개수와 성별을 센다.
@@ -183,7 +194,7 @@ function revealResult() {
   doll.classList.add(ACTUAL_GENDER === 'boy' ? 'doll--boy' : 'doll--girl');
 
   const titleEl = document.getElementById('reveal-title');
-  titleEl.textContent = `${actual.emoji} 우리 아기는 ${actual.label}!`;
+  titleEl.textContent = `${actual.emoji}우리 오뚝이는 ${actual.label}!`;
   titleEl.classList.remove('is-boy', 'is-girl');
   titleEl.classList.add(ACTUAL_GENDER === 'boy' ? 'is-boy' : 'is-girl');
 

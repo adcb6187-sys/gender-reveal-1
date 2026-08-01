@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="초음파 사진을 보고 아기의 성별을 맞춰보세요! 카드 뒤집기 젠더리빌" />
-  <title>🃏 초음파 성별 맞추기 · 카드 젠더리빌</title>
+  <meta property="og:image" content="http://gender-reveal.kro.kr/ultrasound.jpeg" />
+  <title>🃏 오뚝이 성별 맞추기 · 카드 젠더리빌</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Jua&display=swap" rel="stylesheet" />
@@ -17,7 +18,7 @@
     <section id="screen-start" class="screen is-active">
       <div class="start-card">
         <div class="start-emoji">👶</div>
-        <h1 class="start-title">우리 아기<br />성별 맞추기</h1>
+        <h1 class="start-title">오뚝이<br />성별 맞추기</h1>
         <p class="start-sub">초음파 사진을 보고<br />오뚝이의 성별을 맞춰보세요!</p>
         <button class="btn-primary" id="btn-start">시작하기 ✨</button>
         <p class="start-foot">함께해 주셔서 감사합니다 💕</p>
@@ -26,7 +27,7 @@
 
     <!-- ========== 화면 1: 초음파 + 성별 선택 ========== -->
     <section id="screen-guess" class="screen">
-      <h2 class="guess-title">이 초음파 사진 속<br />아기는 누구일까요?</h2>
+      <h2 class="guess-title">초음파 사진을 보고<br />오뚝이의 성별을 맞춰보세요</h2>
       <div class="photo-frame">
         <img src="ultrasound.jpeg" alt="초음파 사진" class="photo" />
         <span class="photo-tape photo-tape--l"></span>
@@ -36,11 +37,11 @@
       <div class="choice-row">
         <button class="choice choice--boy" data-guess="boy">
           <span class="choice__emoji">👦</span>
-          <span class="choice__label">남자아이</span>
+          <span class="choice__label">아들</span>
         </button>
         <button class="choice choice--girl" data-guess="girl">
           <span class="choice__emoji">👧</span>
-          <span class="choice__label">여자아이</span>
+          <span class="choice__label">딸</span>
         </button>
       </div>
     </section>
