@@ -1,7 +1,2 @@
-# 초음파 사진 (개인 파일 - GitHub에 올리지 않음)
-*.jpeg
-*.jpg
-*.png
-
 # macOS
 .DS_Store
